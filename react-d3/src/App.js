@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import BarChart from "./visualizations/BarChart";
 import BChart from "./visualizations/BChart";
+import RadialChart from "./visualizations/RadialChart";
+import RChart from "./visualizations/RChart";
 
 import "./App.css";
 
@@ -59,6 +61,9 @@ class App extends Component {
 
         <BarChart data={data} />
         <BChart data={data} />
+
+        <RadialChart data={data} />
+        <RChart data={data} />
 
         <p>
           (Weather data from{" "}
