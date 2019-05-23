@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create a line chart with D3 line</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+    <script>
+        d3.json("https://raw.githubusercontent.com/sxywu/react-d3-example/master/public/sf.json")
+            .then(res => {
+                const data = res.map(d => Object.assign(d, { date: new Date(d.date) }));
+
+                const width = 650, height = 400;
+
+                const extentDate = d3.extent(data, d => d.date);
+                // we needs only min value of low and only max value of high, not min&max values of low and not min&max values of high
+                const lowMin = d3.min(data, d => d.low);
+                const highMax = d3.max(data, d => d.high);
+
+                const xScale = d3.scaleTime()
+                    .domain(extentDate)
+                    .range([0, width]);
+
+                const yScale = d3.scaleLinear()
+                    .domain([lowMin, highMax])
+                    .range([height, 0]);
+
+                /*
+                const highLine = d3.line()
+                    .x((d) => xScale(d.date))
+                    .y((d) => yScale(d.high));
+
+                const lowLine = d3.line()
+                    .x((d) => xScale(d.date))
+                    .y((d) => yScale(d.low));
+
+
+                const lineChartData = [
+                    { path: highLine(data), fill: "red" },
+                    { path: lowLine(data), fill: "blue" }
+                ];
+                */
+
+                // the same, instead two line generators
+                const line = d3.line()
+                    .x((d) => xScale(d.date))
+
+                const lineChartData = [
+                    { path: line.y(d => yScale(d.high))(data), fill: "red" },
+                    { path: line.y(d => yScale(d.low))(data), fill: "blue" },
+                ];
+
+                const svg = d3.select("body").append("svg")
+                    .attr("width", width).attr("height", height)
+                    .style("background", "pink");
+
+                svg.selectAll("path")
+                    .data(lineChartData).enter().append("path")
+                    .attr("d", d => d.path)
+                    .attr("fill", "none")
+                    .attr("stroke-width", 2)
+                    .attr("stroke", d => d.fill)
+            });
+    </script>
+</body>
+
+</html>
+
+<!-- 
+    https://github.com/d3/d3-shape#lines
+ -->

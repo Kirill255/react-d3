@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create a radial chart with D3 arc</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+    <script>
+        d3.json("https://raw.githubusercontent.com/sxywu/react-d3-example/master/public/sf.json")
+            .then(res => {
+                const data = res.map(d => Object.assign(d, { date: new Date(d.date) }));
+
+                const width = 600, height = 600;
+
+                /*
+                * === tip ===
+                * -> get the angle for each slice
+                * -> 2PI / 360
+                * const perSliceAngle = (2 * Math.PI) / data.length;
+                * const startAngle = i * perSliceAngle;
+                * const endAngle = (i + 1) * perSliceAngle;
+                */
+
+                const radiusScale = d3.scaleLinear()
+                    .domain([
+                        d3.min(data, d => d.low),
+                        d3.max(data, d => d.high)
+                    ])
+                    .range([0, width / 2]);
+
+                const colorsScale = d3.scaleSequential()
+                    .domain(d3.extent(data, d => d.avg))
+                    .interpolator(d3.interpolateSpectral);
+
+                const arcGenerator = d3.arc();
+                const perSliceAngle = (2 * Math.PI) / data.length;
+
+                const radialChartData = data.map((d, i) => {
+                    return {
+                        path: arcGenerator({
+                            startAngle: i * perSliceAngle,
+                            endAngle: (i + 1) * perSliceAngle,
+                            innerRadius: radiusScale(d.low),
+                            outerRadius: radiusScale(d.high),
+                        }),
+                        fill: colorsScale(d.avg),
+                    };
+                });
+
+                const svg = d3.select("body").append("svg")
+                    .attr("width", width).attr("height", height)
+                    .style("background", "pink");
+
+                svg.append("g")
+                    .attr("transform", `translate(${width / 2}, ${height / 2})`)
+                    .selectAll("path")
+                    .data(radialChartData).enter().append("path")
+                    .attr("d", d => d.path)
+                    .attr("fill", d => d.fill)
+
+            });
+    </script>
+</body>
+
+</html>
+
+<!-- 
+    https://github.com/d3/d3-shape#arcs
+ -->
