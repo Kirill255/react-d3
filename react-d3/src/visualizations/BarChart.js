@@ -10,6 +10,7 @@ class BarChart extends Component {
     bars: []
   };
 
+  // Step 1: create axisLeft or axisBottom at beginning of React lifecycle
   xAxis = d3.axisBottom().tickFormat(d3.timeFormat("%b"));
   yAxis = d3.axisLeft().tickFormat((d) => `${d}℉`);
 
@@ -50,10 +51,12 @@ class BarChart extends Component {
       };
     });
 
+    // we must to return xScale and yScale too, because we need access to them in another place, in componentDidUpdate
     return { bars, xScale, yScale };
   }
 
   componentDidUpdate() {
+    // Step 3: call axis on the group element in componentDidUpdate
     this.xAxis.scale(this.state.xScale);
     d3.select(this.refs.xAxis).call(this.xAxis);
     this.yAxis.scale(this.state.yScale);
@@ -66,6 +69,8 @@ class BarChart extends Component {
         {this.state.bars.map((d, i) => (
           <rect key={i} x={d.x} y={d.y} width={2} height={d.height} fill={d.fill} />
         ))}
+
+        {/* Step 2: create an SVG group element in render */}
         <g ref="xAxis" transform={`translate(0, ${height - margin.bottom})`} />
         <g ref="yAxis" transform={`translate(${margin.left}, 0)`} />
       </svg>
@@ -74,3 +79,14 @@ class BarChart extends Component {
 }
 
 export default BarChart;
+
+/*
+1. Create axisLeft or axisBottom at beginning of React lifecycle and set corresponding scale
+const yAxis = d3.axisLeft().scale(yScale);
+
+2. Create an SVG group element in render
+<g ref='group' />
+
+3. Call axis on the group element in componentDidUpdate
+d3.select(this.refs.group).call(yAxis);
+*/
