@@ -4,13 +4,16 @@ import BarChart from "./visualizations/BarChart";
 import BChart from "./visualizations/BChart";
 import RadialChart from "./visualizations/RadialChart";
 import RChart from "./visualizations/RChart";
+import BarChartBrush from "./visualizations/BarChartBrush";
+import RadialChartBrush from "./visualizations/RadialChartBrush";
 
 import "./App.css";
 
 class App extends Component {
   state = {
     temps: {},
-    city: "sf" // city whose temperatures to show
+    city: "sf", // city whose temperatures to show
+    range: [] // time range set by the brush
   };
 
   componentDidMount() {
@@ -30,6 +33,10 @@ class App extends Component {
 
   updateCity = (e) => {
     this.setState({ city: e.target.value });
+  };
+
+  updateRange = (range) => {
+    this.setState({ range });
   };
 
   render() {
@@ -64,6 +71,9 @@ class App extends Component {
 
         <RadialChart data={data} />
         <RChart data={data} />
+
+        <BarChartBrush data={data} range={this.state.range} updateRange={this.updateRange} />
+        <RadialChartBrush data={data} range={this.state.range} />
 
         <p>
           (Weather data from{" "}
