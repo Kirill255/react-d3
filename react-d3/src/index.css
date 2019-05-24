@@ -4,6 +4,12 @@ body {
   font-family: "Libre Baskerville", serif;
 }
 
+canvas {
+  border: 1px solid #666;
+  margin: 5px;
+  vertical-align: top;
+}
+
 select,
 option {
   font-family: "Libre Baskerville", serif;

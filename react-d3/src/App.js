@@ -6,6 +6,8 @@ import RadialChart from "./visualizations/RadialChart";
 import RChart from "./visualizations/RChart";
 import BarChartBrush from "./visualizations/BarChartBrush";
 import RadialChartBrush from "./visualizations/RadialChartBrush";
+import BarChartCanvas from "./visualizations/BarChartCanvas";
+import RadialChartCanvas from "./visualizations/RadialChartCanvas";
 
 import "./App.css";
 
@@ -74,6 +76,9 @@ class App extends Component {
 
         <BarChartBrush data={data} range={this.state.range} updateRange={this.updateRange} />
         <RadialChartBrush data={data} range={this.state.range} />
+
+        <BarChartCanvas data={data} />
+        <RadialChartCanvas data={data} />
 
         <p>
           (Weather data from{" "}
